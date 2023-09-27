@@ -2,10 +2,9 @@ FROM golang:latest
 
 RUN mkdir /app
 WORKDIR /app
-ADD . /app
-
 COPY . /app
 
 RUN go mod tidy
-
-ENTRYPOINT CompileDaemon --build="go build main.go" --command=./main
+RUN go mod vendor
+RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger
+RUN go install github.com/cosmtrek/air@latest

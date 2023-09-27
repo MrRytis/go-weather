@@ -25,10 +25,10 @@ func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := storage.User{
-		Email:    req.Email,
-		Password: pass,
-		CreateAt: time.Now(),
-		UpdateAt: time.Now(),
+		Email:     req.Email,
+		Password:  pass,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err = h.Repository.CreateUser(u)
@@ -37,7 +37,11 @@ func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.JSON(w, http.StatusCreated, "User created") //todo: create response model
+	res := model.RegisterResponse{
+		Message: "User created",
+	}
+
+	response.JSON(w, http.StatusCreated, res)
 }
 
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,11 +63,19 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u.UpdatedAt = time.Now()
+	h.Repository.UpdateUser(&u)
+
 	token, err := service.GenerateJWT(&u)
 	if err != nil {
 		response.ErrorJSON(w, "Failed to generate JWT", http.StatusInternalServerError)
 		return
 	}
 
-	response.JSON(w, http.StatusOK, token) //todo: create response model
+	res := model.LoginResponse{
+		Token:   token,
+		Expires: time.Now().Add(service.AccessTokenJwtExpDuration),
+	}
+
+	response.JSON(w, http.StatusOK, res)
 }

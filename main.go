@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/MrRytis/go-weather/internal"
 	"github.com/MrRytis/go-weather/internal/router"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,11 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	app := internal.NewApp()
 	r := router.NewRouter(app)
 
