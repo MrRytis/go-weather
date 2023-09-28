@@ -1,4 +1,4 @@
-package response
+package httpUtils
 
 import (
 	"encoding/json"
@@ -6,9 +6,15 @@ import (
 	"net/http"
 )
 
+type ErrorResponse struct {
+	Code    int     `json:"code"`
+	Message string  `json:"message"`
+	Errors  []Error `json:"errors"`
+}
+
 type Error struct {
+	Field   string `json:"field"`
 	Message string `json:"message"`
-	Code    int    `json:"code"`
 }
 
 func JSON(w http.ResponseWriter, statusCode int, body interface{}) {
@@ -23,7 +29,7 @@ func JSON(w http.ResponseWriter, statusCode int, body interface{}) {
 	w.Header().Set("Content-Length", fmt.Sprint(len(jsonData)))
 	w.WriteHeader(statusCode)
 
-	// Write the JSON data to the response
+	// Write the JSON data to the response body
 	_, err = w.Write(jsonData)
 	if err != nil {
 		http.Error(w, "Error writing JSON to response body", http.StatusInternalServerError)
@@ -31,11 +37,23 @@ func JSON(w http.ResponseWriter, statusCode int, body interface{}) {
 	}
 }
 
-func ErrorJSON(w http.ResponseWriter, message string, statusCode int) {
-	err := Error{
+func ErrorJSON(w http.ResponseWriter, message string, statusCode int, errors ...Error) {
+	err := ErrorResponse{
 		Message: message,
 		Code:    statusCode,
+		Errors:  errors,
 	}
 
 	JSON(w, statusCode, err)
+}
+
+func ParseJSON(r *http.Request, w http.ResponseWriter, v interface{}) error {
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(v)
+	if err != nil {
+		ErrorJSON(w, "Failed to parse request body", http.StatusBadRequest)
+		return err
+	}
+
+	return err
 }

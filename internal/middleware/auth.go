@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/MrRytis/go-weather/internal/service"
-	"github.com/MrRytis/go-weather/pkg/response"
+	"github.com/MrRytis/go-weather/internal/service/auth"
+	"github.com/MrRytis/go-weather/pkg/httpUtils"
 	"net/http"
 	"strings"
 )
@@ -12,13 +12,13 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		tokenString := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 
 		if tokenString == "" {
-			response.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
+			httpUtils.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
-		_, err := service.ParseJWT(tokenString)
+		_, err := authService.ParseJWT(tokenString)
 		if err != nil {
-			response.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
+			httpUtils.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 

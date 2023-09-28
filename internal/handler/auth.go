@@ -1,26 +1,29 @@
 package handler
 
 import (
-	"encoding/json"
 	"github.com/MrRytis/go-weather/internal/model"
-	"github.com/MrRytis/go-weather/internal/service"
+	"github.com/MrRytis/go-weather/internal/service/auth"
 	"github.com/MrRytis/go-weather/internal/storage"
-	"github.com/MrRytis/go-weather/pkg/response"
+	"github.com/MrRytis/go-weather/pkg/httpUtils"
 	"net/http"
 	"time"
 )
 
 func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var req model.AuthRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err := httpUtils.ParseJSON(r, w, &req)
 	if err != nil {
-		response.ErrorJSON(w, "Failed to parse request body", http.StatusBadRequest)
 		return
 	}
 
-	pass, err := service.HashPassword(req.Password)
+	err = httpUtils.ValidateStruct(w, req)
 	if err != nil {
-		response.ErrorJSON(w, "Failed to hash password", http.StatusInternalServerError)
+		return
+	}
+
+	pass, err := authService.HashPassword(req.Password)
+	if err != nil {
+		httpUtils.ErrorJSON(w, "Failed to hash password", http.StatusInternalServerError)
 		return
 	}
 
@@ -33,7 +36,7 @@ func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Repository.CreateUser(u)
 	if err != nil {
-		response.ErrorJSON(w, "Failed to create user", http.StatusInternalServerError)
+		httpUtils.ErrorJSON(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
 
@@ -41,41 +44,40 @@ func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		Message: "User created",
 	}
 
-	response.JSON(w, http.StatusCreated, res)
+	httpUtils.JSON(w, http.StatusCreated, res)
 }
 
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req model.AuthRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err := httpUtils.ParseJSON(r, w, &req)
 	if err != nil {
-		response.ErrorJSON(w, "Failed to parse request body", http.StatusBadRequest)
 		return
 	}
 
 	u, err := h.Repository.GetUserByEmail(req.Email)
 	if err != nil {
-		response.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
+		httpUtils.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	if service.CheckUserPassword(req.Password, u.Password) != nil {
-		response.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
+	if authService.CheckUserPassword(req.Password, u.Password) != nil {
+		httpUtils.ErrorJSON(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
 	u.UpdatedAt = time.Now()
 	h.Repository.UpdateUser(&u)
 
-	token, err := service.GenerateJWT(&u)
+	token, err := authService.GenerateJWT(&u)
 	if err != nil {
-		response.ErrorJSON(w, "Failed to generate JWT", http.StatusInternalServerError)
+		httpUtils.ErrorJSON(w, "Failed to generate JWT", http.StatusInternalServerError)
 		return
 	}
 
 	res := model.LoginResponse{
 		Token:   token,
-		Expires: time.Now().Add(service.AccessTokenJwtExpDuration),
+		Expires: time.Now().Add(authService.AccessTokenJwtExpDuration),
 	}
 
-	response.JSON(w, http.StatusOK, res)
+	httpUtils.JSON(w, http.StatusOK, res)
 }

@@ -1,4 +1,4 @@
-package service
+package authService
 
 import (
 	"fmt"
