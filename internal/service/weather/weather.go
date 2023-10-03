@@ -34,16 +34,18 @@ func GetWeather(city string) (*[]storage.Weather, error) {
 		}(p, resultChan)
 	}
 
-	wg.Wait() // Wait for all goroutines to finish
-	close(resultChan)
+	go func() {
+		wg.Wait() // Wait for all goroutines to finish
+		close(resultChan)
+	}()
 
 	// Collect results from the channel
-	var res *[]storage.Weather
+	var res []storage.Weather
 	for result := range resultChan {
-		*res = append(*res, *result)
+		res = append(res, *result)
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func IsCitySupported(city string) bool {

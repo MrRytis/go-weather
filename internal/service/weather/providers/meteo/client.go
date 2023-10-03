@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 )
 
 type response struct {
@@ -12,17 +11,17 @@ type response struct {
 }
 
 type weather struct {
-	Time          time.Time `json:"observationTimeUtc"`
-	Temp          float32   `json:"airTemperature"`
-	FeelsLike     float32   `json:"feelsLikeTemperature"`
-	WindSpeed     float32   `json:"windSpeed"`
-	WindGust      float32   `json:"windGust"`
-	WindDir       int32     `json:"windDirection"`
-	Clouds        int32     `json:"cloudCover"`
-	Pressure      float32   `json:"seaLevelPressure"`
-	Humidity      int32     `json:"relativeHumidity"`
-	Precipitation int32     `json:"precipitation"`
-	Condition     string    `json:"conditionCode"`
+	Time          string  `json:"observationTimeUtc"`
+	Temp          float32 `json:"airTemperature"`
+	FeelsLike     float32 `json:"feelsLikeTemperature"`
+	WindSpeed     float32 `json:"windSpeed"`
+	WindGust      float32 `json:"windGust"`
+	WindDir       int32   `json:"windDirection"`
+	Clouds        int32   `json:"cloudCover"`
+	Pressure      float32 `json:"seaLevelPressure"`
+	Humidity      int32   `json:"relativeHumidity"`
+	Precipitation int32   `json:"precipitation"`
+	Condition     string  `json:"conditionCode"`
 }
 
 func getWeather(city string) (*[]weather, error) {
@@ -34,13 +33,13 @@ func getWeather(city string) (*[]weather, error) {
 	}
 	defer res.Body.Close()
 
-	var response response
-	err = json.NewDecoder(res.Body).Decode(&response)
+	var meteoRes response
+	err = json.NewDecoder(res.Body).Decode(&meteoRes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode httpUtils body: %w", err)
 	}
 
-	return &response.Weather, nil
+	return &meteoRes.Weather, nil
 }
 
 func convertCityToStation(city string) string {

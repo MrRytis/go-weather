@@ -1,22 +1,24 @@
 package storage
 
-import "time"
+import (
+	"time"
+)
 
 type Weather struct {
 	Id            int32     `gorm:"primaryKey"`
 	City          string    `gorm:"not null"`
 	Temp          float32   `gorm:"not null"`
 	FeelsLike     float32   `gorm:"not null"`
-	Pressure      float32   `gorm:"not null"`
-	Humidity      int32     `gorm:"not null"`
 	WindSpeed     float32   `gorm:"not null"`
 	WindDeg       int32     `gorm:"not null"`
-	Clouds        int32     `gorm:"not null"`
 	Weather       string    `gorm:"not null"`
 	Precipitation int32     `gorm:"not null"`
 	Time          time.Time `gorm:"not null"`
 	CreateAt      time.Time `gorm:"autoCreateTime"`
 	Provider      string    `gorm:"not null"`
+	Pressure      *float32
+	Humidity      *int32
+	Clouds        *int32
 }
 
 func (Weather) TableName() string {

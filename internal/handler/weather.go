@@ -6,11 +6,12 @@ import (
 	"github.com/MrRytis/go-weather/pkg/httpUtils"
 	"github.com/gorilla/mux"
 	"net/http"
+	"strings"
 )
 
 func (h *Handler) GetCitiesWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	city := vars["city"]
+	city := strings.ToUpper(vars["city"])
 
 	if !weatherService.IsCitySupported(city) {
 		httpUtils.ErrorJSON(w, "City is not supported", http.StatusBadRequest)
@@ -35,6 +36,7 @@ func (h *Handler) GetCitiesWeatherHandler(w http.ResponseWriter, r *http.Request
 			Precipitation: v.Precipitation,
 			Weather:       v.Weather,
 			Provider:      v.Provider,
+			City:          v.City,
 		})
 	}
 
