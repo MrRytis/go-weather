@@ -14,6 +14,8 @@ func NewRouter(app *internal.App) *mux.Router {
 	m := middleware.NewMiddleware(app.Db)
 	h := handler.NewHandler(app.Db, app.C)
 
+	r.HandleFunc("/", h.IndexHandler).Methods(http.MethodGet)
+
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.Use(m.RateLimitMiddleware)
 

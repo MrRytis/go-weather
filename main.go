@@ -14,6 +14,8 @@ import (
 )
 
 func main() {
+	log.Println("Starting server...")
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -35,6 +37,8 @@ func main() {
 			log.Println(err)
 		}
 	}()
+
+	log.Printf("Server started at http://%s", srv.Addr)
 
 	c := make(chan os.Signal, 1)
 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
