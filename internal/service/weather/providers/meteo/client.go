@@ -20,7 +20,7 @@ type weather struct {
 	Clouds        int32   `json:"cloudCover"`
 	Pressure      float32 `json:"seaLevelPressure"`
 	Humidity      int32   `json:"relativeHumidity"`
-	Precipitation int32   `json:"precipitation"`
+	Precipitation float32 `json:"precipitation"`
 	Condition     string  `json:"conditionCode"`
 }
 

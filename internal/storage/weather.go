@@ -14,7 +14,7 @@ type Weather struct {
 	Weather       string    `gorm:"not null"`
 	Precipitation int32     `gorm:"not null"`
 	Time          time.Time `gorm:"not null"`
-	CreateAt      time.Time `gorm:"autoCreateTime"`
+	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	Provider      string    `gorm:"not null"`
 	Pressure      *float32
 	Humidity      *int32

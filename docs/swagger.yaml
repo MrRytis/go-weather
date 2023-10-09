@@ -1,0 +1,297 @@
+basePath: /api/v1
+definitions:
+  httpUtils.Error:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  httpUtils.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      errors:
+        items:
+          $ref: '#/definitions/httpUtils.Error'
+        type: array
+      message:
+        type: string
+    type: object
+  model.AuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.CronJobRequest:
+    properties:
+      job:
+        example: weather
+        type: string
+      spec:
+        example: '@every 3h'
+        type: string
+    required:
+    - job
+    type: object
+  model.CronResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.LoginResponse:
+    properties:
+      expires:
+        type: string
+      token:
+        type: string
+    type: object
+  model.RegisterResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.WeatherResponse:
+    properties:
+      city:
+        type: string
+      clouds:
+        type: integer
+      feels_like:
+        type: number
+      humidity:
+        type: integer
+      precipitation:
+        type: integer
+      pressure:
+        type: number
+      provider:
+        type: string
+      temp:
+        type: number
+      weather:
+        type: string
+      wind_deg:
+        type: integer
+      wind_speed:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample weather API server written in Go.
+  title: Go Weather API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login and get JWT token
+      parameters:
+      - description: User details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginResponse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User created
+          schema:
+            $ref: '#/definitions/model.RegisterResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "500":
+          description: Failed to login user
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+      summary: Login user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user and when use login endpoint to get JWT token
+      parameters:
+      - description: User details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/model.RegisterResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "500":
+          description: Failed to create user
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+      summary: Register new user
+      tags:
+      - auth
+  /cron/add:
+    put:
+      consumes:
+      - application/json
+      description: Add cron job
+      parameters:
+      - description: Cron job details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CronJobRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cron added
+          schema:
+            $ref: '#/definitions/model.CronResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "500":
+          description: Failed to add job
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add cron job
+      tags:
+      - cron
+  /cron/start:
+    post:
+      consumes:
+      - application/json
+      description: Start cron jobs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cron started
+          schema:
+            $ref: '#/definitions/model.CronResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Start cron jobs
+      tags:
+      - cron
+  /cron/stop:
+    post:
+      consumes:
+      - application/json
+      description: Stop cron jobs
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cron stopped
+          schema:
+            $ref: '#/definitions/model.CronResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Stop cron jobs
+      tags:
+      - cron
+  /weather/{city}/history:
+    get:
+      consumes:
+      - application/json
+      description: Get historical weather for city
+      parameters:
+      - description: 'City name (allowed: Vilnius, Kaunas, Klaipeda)'
+        in: path
+        name: city
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Historical weather
+          schema:
+            items:
+              $ref: '#/definitions/model.WeatherResponse'
+            type: array
+        "400":
+          description: City is not supported
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get historical weather for city
+      tags:
+      - weather
+  /weather/{city}/now:
+    get:
+      consumes:
+      - application/json
+      description: Get current weather for city
+      parameters:
+      - description: 'City name (allowed: Vilnius, Kaunas, Klaipeda)'
+        in: path
+        name: city
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Current weather
+          schema:
+            items:
+              $ref: '#/definitions/model.WeatherResponse'
+            type: array
+        "400":
+          description: City is not supported
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/httpUtils.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get current weather for city
+      tags:
+      - weather
+schemes:
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    type: basic
+swagger: "2.0"

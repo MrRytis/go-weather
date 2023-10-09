@@ -1,10 +1,12 @@
 package router
 
 import (
+	_ "github.com/MrRytis/go-weather/docs"
 	"github.com/MrRytis/go-weather/internal"
 	"github.com/MrRytis/go-weather/internal/handler"
 	"github.com/MrRytis/go-weather/internal/middleware"
 	"github.com/gorilla/mux"
+	"github.com/swaggo/http-swagger/v2"
 	"net/http"
 )
 
@@ -18,6 +20,14 @@ func NewRouter(app *internal.App) *mux.Router {
 
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.Use(m.RateLimitMiddleware)
+
+	// Docs
+	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition
+		httpSwagger.DeepLinking(true),
+		httpSwagger.DocExpansion("none"),
+		httpSwagger.DomID("swagger-ui"),
+	)).Methods(http.MethodGet)
 
 	// Auth
 	auth := api.PathPrefix("/auth").Subrouter()
@@ -35,7 +45,7 @@ func NewRouter(app *internal.App) *mux.Router {
 	cron.Use(m.AuthMiddleware)
 	cron.HandleFunc("/start", h.StartCronHandler).Methods(http.MethodPost)
 	cron.HandleFunc("/stop", h.StopCronHandler).Methods(http.MethodPost)
-	cron.HandleFunc("/add", h.AddCronJobHandler).Methods(http.MethodPost)
+	cron.HandleFunc("/add", h.AddCronJobHandler).Methods(http.MethodPut)
 
 	return r
 }

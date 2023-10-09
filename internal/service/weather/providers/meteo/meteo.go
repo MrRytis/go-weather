@@ -32,7 +32,7 @@ func (p Provider) GetCurrentWeather(city string) (*storage.Weather, error) {
 		Clouds:        &v.Clouds,
 		Pressure:      &v.Pressure,
 		Humidity:      &v.Humidity,
-		Precipitation: v.Precipitation,
+		Precipitation: int32(v.Precipitation),
 		Weather:       v.Condition,
 		Provider:      ProviderName,
 		City:          city,

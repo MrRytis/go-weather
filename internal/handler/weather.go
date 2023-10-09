@@ -9,6 +9,18 @@ import (
 	"strings"
 )
 
+// GetCitiesWeatherHandler godoc
+// @Router /weather/{city}/now [get]
+// @Summary Get current weather for city
+// @Description Get current weather for city
+// @Tags weather
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param city path string true "City name (allowed: Vilnius, Kaunas, Klaipeda)"
+// @Success 200 {object} []model.WeatherResponse "Current weather"
+// @Failure 400 {object} httpUtils.ErrorResponse "City is not supported"
+// @Failure 500 {object} httpUtils.ErrorResponse "Internal server error"
 func (h *Handler) GetCitiesWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	city := strings.ToUpper(vars["city"])
@@ -43,6 +55,20 @@ func (h *Handler) GetCitiesWeatherHandler(w http.ResponseWriter, r *http.Request
 	httpUtils.JSON(w, http.StatusOK, res)
 }
 
+// GetHistoricalCitiesWeatherHandler godoc
+// @Router /weather/{city}/history [get]
+// @Summary Get historical weather for city
+// @Description Get historical weather for city
+// @Tags weather
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param city path string true "City name (allowed: Vilnius, Kaunas, Klaipeda)"
+// @Param page query int false "Page number"
+// @Param limit query int false "Page limit"
+// @Success 200 {object} []model.WeatherResponse "Historical weather"
+// @Failure 400 {object} httpUtils.ErrorResponse "City is not supported"
+// @Failure 500 {object} httpUtils.ErrorResponse "Internal server error"
 func (h *Handler) GetHistoricalCitiesWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	city := vars["city"]

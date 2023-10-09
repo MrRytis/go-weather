@@ -14,6 +14,6 @@ type Middleware struct {
 func NewMiddleware(db *gorm.DB) *Middleware {
 	return &Middleware{
 		Repository: storage.NewRepository(db),
-		Limiter:    rate.NewLimiter(0.2, 1),
+		Limiter:    rate.NewLimiter(0.4, 1),
 	}
 }

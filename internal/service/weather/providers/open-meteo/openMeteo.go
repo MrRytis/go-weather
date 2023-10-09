@@ -16,9 +16,19 @@ func (p Provider) GetCurrentWeather(city string) (*storage.Weather, error) {
 		return nil, fmt.Errorf("failed to get weather data: %w", err)
 	}
 
+	if res.Weather.Time == "" {
+		res.Weather.Time = time.Now().Format("2006-01-02T15:04")
+
+	}
+
 	t, err := time.Parse("2006-01-02T15:04", res.Weather.Time)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse time: %w", err)
+	}
+
+	participation := int32(0)
+	if len(res.Daily.PrecipitationSum) > 0 {
+		participation = int32(res.Daily.PrecipitationSum[0])
 	}
 
 	w := storage.Weather{
@@ -30,7 +40,7 @@ func (p Provider) GetCurrentWeather(city string) (*storage.Weather, error) {
 		Clouds:        nil,
 		Pressure:      nil,
 		Humidity:      nil,
-		Precipitation: int32(res.Daily.PrecipitationSum[0]),
+		Precipitation: participation,
 		Weather:       translateVMOCodeToText(res.Weather.WeatherCode),
 		Provider:      ProviderName,
 		City:          city,

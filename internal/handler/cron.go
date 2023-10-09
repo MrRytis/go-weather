@@ -7,6 +7,15 @@ import (
 	"net/http"
 )
 
+// StartCronHandler godoc
+// @Router /cron/start [post]
+// @Summary Start cron jobs
+// @Description Start cron jobs
+// @Tags cron
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.CronResponse "Cron started"
 func (h *Handler) StartCronHandler(w http.ResponseWriter, r *http.Request) {
 	h.Cron.Start()
 
@@ -17,6 +26,15 @@ func (h *Handler) StartCronHandler(w http.ResponseWriter, r *http.Request) {
 	httpUtils.JSON(w, http.StatusOK, res)
 }
 
+// StopCronHandler godoc
+// @Router /cron/stop [post]
+// @Summary Stop cron jobs
+// @Description Stop cron jobs
+// @Tags cron
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.CronResponse "Cron stopped"
 func (h *Handler) StopCronHandler(w http.ResponseWriter, r *http.Request) {
 	h.Cron.Stop()
 
@@ -27,6 +45,18 @@ func (h *Handler) StopCronHandler(w http.ResponseWriter, r *http.Request) {
 	httpUtils.JSON(w, http.StatusOK, res)
 }
 
+// AddCronJobHandler godoc
+// @Router /cron/add [put]
+// @Summary Add cron job
+// @Description Add cron job
+// @Tags cron
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body model.CronJobRequest true "Cron job details"
+// @Success 200 {object} model.CronResponse "Cron added"
+// @Failure 400 {object} httpUtils.ErrorResponse "Invalid request body"
+// @Failure 500 {object} httpUtils.ErrorResponse "Failed to add job"
 func (h *Handler) AddCronJobHandler(w http.ResponseWriter, r *http.Request) {
 	var req model.CronJobRequest
 	err := httpUtils.ParseJSON(r, w, &req)

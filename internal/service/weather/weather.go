@@ -48,6 +48,10 @@ func GetWeather(city string) (*[]storage.Weather, error) {
 	return &res, nil
 }
 
+func GetAllowedCities() []string {
+	return supportedCities
+}
+
 func IsCitySupported(city string) bool {
 	for _, c := range supportedCities {
 		if c == city {

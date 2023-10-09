@@ -30,6 +30,12 @@ func AddJob(c *cron.Cron, db *gorm.DB, name string, spec string) error {
 		return err
 	}
 
+	if spec == "" {
+		spec = "@every 3h"
+	}
+
+	c.Entries()
+
 	_, err = c.AddFunc(spec, func() {
 		job.RunJob(db)
 	})

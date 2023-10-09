@@ -13,6 +13,20 @@ import (
 	"time"
 )
 
+// @title Go Weather API
+// @description This is a sample weather API server written in Go.
+// @version 1.0
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @contactName Rytis Jančeris
+// @contactEmail rytis.janceris@gmail.com
+
+// @schemes http
+// @schemes https
+
+// @securityDefinitions.basic ApiKeyAuth
 func main() {
 	log.Println("Starting server...")
 
@@ -26,7 +40,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "127.0.0.1:8080",
+		Addr:         "localhost:8080",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
