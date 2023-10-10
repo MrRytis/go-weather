@@ -2,12 +2,14 @@
 
 ## Description
 
-This is a simple weather application that uses the Meteo. lt and Open-Meteo API to get the weather data for a given city.
+This is a simple weather application that uses the Meteo.lt and Open-Meteo API to get the weather data for a given city.
 
-Currently support cities:
+Currently supported cities:
 - Vilnius
 - Kaunas
 - Klaipeda
+
+Visit http://weather.rytis-projects.lt to check out project
 
 ____
 
