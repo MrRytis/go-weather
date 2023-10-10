@@ -4,16 +4,28 @@ build:
 up:
 	docker-compose up -d
 
+down:
+	docker-compose down
+
+ssh:
+	docker-compose exec go bash
+
 migration_generate:
-	go run cmd/migration/migration_generate.go
+	docker-compose exec go bash | go run cmd/migration/migration_generate.go
 
 migration_up:
-	go run cmd/migration/migration_up.go
+	docker-compose exec go bash | go run cmd/migration/migration_up.go
 
 migration_down:
-	go run cmd/migration/migration_down.go
+	docker-compose exec go bash | go run cmd/migration/migration_down.go
+
+run_air:
+	docker-compose exec go bash | air
 
 run:
-	go run main.go
+	docker-compose exec go bash | go run main.go
 
-.PHONY: build up migration_generate migration_up migration_down
+swagger:
+	docker-compose exec go bash | swag init
+
+.PHONY: build up down ssh migration_generate migration_up migration_down run run_air
