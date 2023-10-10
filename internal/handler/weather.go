@@ -71,7 +71,7 @@ func (h *Handler) GetCitiesWeatherHandler(w http.ResponseWriter, r *http.Request
 // @Failure 500 {object} httpUtils.ErrorResponse "Internal server error"
 func (h *Handler) GetHistoricalCitiesWeatherHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	city := vars["city"]
+	city := strings.ToUpper(vars["city"])
 
 	page := httpUtils.GetIntQueryParam(r, "page", 1) - 1
 	limit := httpUtils.GetIntQueryParam(r, "limit", 10)
@@ -95,6 +95,7 @@ func (h *Handler) GetHistoricalCitiesWeatherHandler(w http.ResponseWriter, r *ht
 	var data []model.WeatherResponse
 	for _, v := range weather {
 		data = append(data, model.WeatherResponse{
+			City:          v.City,
 			Temp:          v.Temp,
 			FeelsLike:     v.FeelsLike,
 			WindSpeed:     v.WindSpeed,
@@ -110,7 +111,7 @@ func (h *Handler) GetHistoricalCitiesWeatherHandler(w http.ResponseWriter, r *ht
 
 	res := model.HistoricalWeatherResponse{
 		Data:  data,
-		Page:  page,
+		Page:  page + 1,
 		Total: total,
 		Limit: limit,
 	}

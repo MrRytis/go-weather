@@ -55,8 +55,8 @@ func convertCityToStation(city string) coordination {
 	switch city {
 	case "VILNIUS":
 		return coordination{
-			Longitude: "25,2798",
-			Latitude:  "54,6892",
+			Longitude: "25.2798",
+			Latitude:  "54.6892",
 		}
 	case "KAUNAS":
 		return coordination{
@@ -65,8 +65,8 @@ func convertCityToStation(city string) coordination {
 		}
 	case "KLAIPEDA":
 		return coordination{
-			Longitude: "21,1391",
-			Latitude:  "55,7068",
+			Longitude: "21.1391",
+			Latitude:  "55.7068",
 		}
 	default:
 		return coordination{}
