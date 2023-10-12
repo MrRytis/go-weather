@@ -15,7 +15,7 @@ RUN go install github.com/cosmtrek/air@latest
 
 
 # Tells Docker which network port your container listens on
-EXPOSE 9000
+EXPOSE 8001
 
 # Specifies the executable command that runs when the container starts
 CMD [ "air" ]

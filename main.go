@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"github.com/MrRytis/go-weather/internal"
 	"github.com/MrRytis/go-weather/internal/router"
 	"github.com/joho/godotenv"
@@ -40,7 +41,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "127.0.0.1:9000",
+		Addr:         fmt.Sprintf("127.0.0.1:%s", os.Getenv("PORT")),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	_ "github.com/MrRytis/go-weather/docs"
 	"github.com/MrRytis/go-weather/internal"
 	"github.com/MrRytis/go-weather/internal/handler"
@@ -8,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/swaggo/http-swagger/v2"
 	"net/http"
+	"os"
 )
 
 func NewRouter(app *internal.App) *mux.Router {
@@ -23,7 +25,7 @@ func NewRouter(app *internal.App) *mux.Router {
 
 	// Docs
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://127.0.0.1:9000/swagger/doc.json"), //The url pointing to API definition
+		httpSwagger.URL(fmt.Sprintf("127.0.0.1:%s/swagger/doc.json", os.Getenv("PORT"))), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
