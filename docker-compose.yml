@@ -5,11 +5,11 @@ services:
       context: .
       dockerfile: ./build/docker/go/dockerfile
     ports:
-      - "8080:8080" # Web Server
+      - "9000:9000" # Web Server
     volumes:
       - ./:/app
     environment:
-      PORT: "8080"
+      PORT: "9000"
   postgres:
     build:
       context: .
